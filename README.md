@@ -19,11 +19,11 @@ TL;DR (HOCON-link): HOCON is a JSON-subset which allows simpler writing style fo
 
 # how to use
 
-1. `yarn add stocon` in your project
+1. `yarn add ahocon` in your project
 1. import as shown below
 
 ```js
-import { parse } from 'shocon'
+import { parse } from 'ahocon'
 
 parse(...) // results in a json suiting the provided hocon (which is provided as string)
 ```
@@ -31,7 +31,7 @@ parse(...) // results in a json suiting the provided hocon (which is provided as
 also available for typescript
 
 ```ts
-import { parse } from 'shocon'
+import { parse } from 'ahocon'
 
 parse<...>(...) // results in a json suiting the provided hocon
 ```
