@@ -1,6 +1,6 @@
 {
   "name": "ahocon",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "dev": "vite",
     "build": "rm -rf dist && tsc -p ./tsconfig-build.json && vite build",
@@ -48,8 +48,5 @@
     "json",
     "config",
     "simple"
-  ],
-  "dependencies": {
-    "ahocon": "file:ahocon-0.0.1.tgz"
-  }
+  ]
 }
