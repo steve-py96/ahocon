@@ -1,0 +1,12 @@
+!dist/
+
+.vscode/
+.github/
+.editorconfig
+.gitignore
+.nvmrc
+.prettierrc
+src/
+tsconfig.json
+tsconfig-build.json
+vite.config.ts
