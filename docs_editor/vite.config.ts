@@ -14,6 +14,7 @@ export default defineConfig(async () => ({
         .version
     ),
   },
+  base: '/ahocon',
   resolve: {
     alias: [
       {

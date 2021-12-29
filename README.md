@@ -17,6 +17,12 @@ TL;DR (HOCON-link): HOCON is a JSON-subset which allows simpler writing style fo
 
 <br />
 
+# playground
+
+https://steve-py96.github.io/ahocon/
+
+<br />
+
 # how to use
 
 1. `yarn add ahocon` in your project
