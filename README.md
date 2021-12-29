@@ -6,7 +6,7 @@
 
 Ahocon (short for Another [HOCON](https://github.com/lightbend/config/blob/master/HOCON.md)) (or sth japanese + spanish?) is a little superset of [HOCON](https://github.com/lightbend/config/blob/master/HOCON.md) in a self-written parser. <br /> <br />
 
-TL;DR (HOCON-link): HOCON is a JSON-subset which allows simpler writing style for humans (omiting quotes f.e., see [syntax below!](#syntax)).
+TL;DR (HOCON-link): HOCON is a JSON superset which allows simpler writing style for humans (omiting quotes f.e., see [syntax below!](#syntax)).
 
 <br />
 
@@ -25,7 +25,7 @@ https://steve-py96.github.io/ahocon/
 
 # how to use
 
-1. `yarn add ahocon` in your project
+1. `npm install ahocon` / `yarn add ahocon` in your project
 1. import as shown below
 
 ```js
