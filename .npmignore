@@ -10,3 +10,5 @@ src/
 tsconfig.json
 tsconfig-build.json
 vite.config.ts
+docs_editor/
+docs/
