@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite",
     "build": "rm -rf dist && tsc -p ./tsconfig-build.json && vite build",
-    "build:docs": "yarn --cwd docs_editor build && rm -rf docs/* && cp -rf ./docs_editor/dist/* ./docs",
+    "build:docs": "yarn --cwd docs_editor upgrade ahocon --latest && yarn --cwd docs_editor build && rm -rf docs/* && cp -rf ./docs_editor/dist/* ./docs",
     "preview": "vite preview",
     "test": "uvu -r tsm src/specs",
     "test:watch": "watchlist src/specs -- uvu -r tsm src/specs --ignore testHelpers.ts",
