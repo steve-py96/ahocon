@@ -6,7 +6,7 @@ import { resolve } from 'node:path';
 import { readFile } from 'node:fs/promises';
 
 // https://vitejs.dev/config/
-export default defineConfig(async () => ({
+export default defineConfig(async ({ mode }) => ({
   plugins: [react(), unocss(), svgr()],
   define: {
     __APP_VERSION__: JSON.stringify(
@@ -14,7 +14,7 @@ export default defineConfig(async () => ({
         .version
     ),
   },
-  base: '/ahocon/',
+  base: mode === 'production' ? '/ahocon/' : '',
   resolve: {
     alias: [
       {
