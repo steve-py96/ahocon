@@ -79,14 +79,32 @@ test('"lex" recognizes and filters the tokens properly', () => {
   assert.is(lex('{').context[0].token, TOKEN.OBJECT_OPEN);
   assert.is(lex('}').context[0].token, TOKEN.OBJECT_CLOSE);
 
-  // comments (they're not stripped out before their closing appears)
-  assert.is(lex('#').context[0].token, TOKEN.SINGLELINE_COMMENT);
-  assert.is(lex('//').context[0].token, TOKEN.SINGLELINE_COMMENT);
+  // comments
+  assert.is(lex('#').context.length, 0); // works with EOF
+  assert.is(lex('//').context.length, 0); // works with EOF
+  assert.is(lex('#\n').context.length, 0); // works with newline
+  assert.is(lex('//\n').context.length, 0); // works with newline
   assert.is(lex('/*').context[0].token, TOKEN.MULTILINE_COMMENT_OPEN);
   assert.is(lex('*/').context[0].token, TOKEN.MULTILINE_COMMENT_CLOSE);
-  assert.is(lex('# comment \n').context.length, 0); // singleline closes with \n
   assert.is(lex('/* comment */').context.length, 0);
   assert.is(lex('/* \n    comment\n */').context.length, 0);
+
+  // inline comments don't break stuff
+  assert.is(lex('abc = 123 # { hihi: hoho }').context.length, 2);
+  assert.is(lex('abc = 123 // { hihi: hoho }').context.length, 2);
+  assert.is(lex('abc = 123 /* { hihi: hoho } */').context.length, 2);
+  assert.is(lex('/* { hihi: hoho } */ abc = 123').context.length, 2);
+  assert.is(lex('abc/* { hihi: hoho } */ = 123').context.length, 2);
+  assert.is(lex('abc =/* { hihi: hoho } */ 123').context.length, 2);
+
+  // comments in comments
+  assert.is(lex('abc = 123 # a # b # c').context.length, 2);
+  assert.is(lex('abc = 123 # a // b # c').context.length, 2);
+  assert.is(lex('abc = 123 # a /* hello */').context.length, 2);
+  assert.is(lex('abc = 123 // a # b // c').context.length, 2);
+  assert.is(lex('abc = 123 // a // b // c').context.length, 2);
+  assert.is(lex('abc = 123 // a /* hello */').context.length, 2);
+  assert.is(lex('abc = 123 /* hello # test */').context.length, 2);
 
   // refs
   const ref = lex('${x}').context; // [open, value, close]

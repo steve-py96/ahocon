@@ -74,9 +74,9 @@ Some notes about the syntax:
 # types (assigning is possible via = and :, remember!)
 string = abc # => { string: "abc" }
 number = 123 # => { number: 123 } # => floats ofc also
-bool = true => { bool: true }
+bool = true # => { bool: true }
 null = null # => { null: null }
-undefined = undefined { undefined: undefined }
+undefined = undefined # => { undefined: undefined }
 short.hand = 123 # => { short: { hand: 123 } }
 
 # objects (commas are optional, remember!)

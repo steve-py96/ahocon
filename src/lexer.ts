@@ -123,21 +123,32 @@ const lex = (input: string, config?: Partial<{ raw: boolean }>): HOCON.LexerStat
           inside.comment = false;
           const lastCommentIndex = context.indexOf(lastComment);
           context.splice(lastCommentIndex, context.length - lastCommentIndex);
+          // allow the \n to survive
+          context.push(item);
         }
       } else if (isTokenComment) {
         const isCommentClose = token.key === TOKEN.MULTILINE_COMMENT_CLOSE;
         const lastComment = context
           .filter((ctx) => COMMENT_TOKENS.includes(ctx.token || ('' as TOKEN)) && ctx !== item)
           .pop();
-
-        // if it's not a closing one fitting to an open one we can already skip this
-        if (isCommentClose && lastComment?.token !== TOKEN.MULTILINE_COMMENT_OPEN) continue;
+        const previousInsideComment = inside.comment;
 
         // otherwise it depends, a singleline will be true, an opening one will be true, everything but a closing comment
         inside.comment = !isCommentClose;
 
-        // if we're really closing the comment we prune the output
-        if (isCommentClose) {
+        // if it's not a closing one fitting to an open one we can already skip this
+        if (!isCommentClose) {
+          // if we were inside a comment before we just remove this entry again
+          if (previousInsideComment) context.pop();
+
+          continue;
+        }
+
+        // if we're really closing the comment we prune the output, also happens if we were inside a comment (# */ f.e. where */ doesn't matter)
+        if (
+          isCommentClose &&
+          (lastComment?.token === TOKEN.MULTILINE_COMMENT_OPEN || previousInsideComment)
+        ) {
           const lastCommentIndex = context.indexOf(lastComment!);
           context.splice(lastCommentIndex, context.length - lastCommentIndex);
         }
@@ -155,7 +166,18 @@ const lex = (input: string, config?: Partial<{ raw: boolean }>): HOCON.LexerStat
     }
   }
 
-  let { context } = state;
+  let { context, inside } = state;
+
+  const lastComment = context
+    .filter((ctx) => COMMENT_TOKENS.includes(ctx.token || ('' as TOKEN)))
+    .pop();
+
+  // allows singleline comments at EOF without \n
+  if (inside.comment && lastComment?.token === TOKEN.SINGLELINE_COMMENT) {
+    inside.comment = false;
+    const lastCommentIndex = context.indexOf(lastComment);
+    context.splice(lastCommentIndex, context.length - lastCommentIndex);
+  }
 
   if (!conf.raw) {
     // trim out whitespaces (leading and trailing newlines)

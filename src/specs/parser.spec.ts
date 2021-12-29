@@ -520,6 +520,16 @@ test('"parse" throws proper errors', () => {
     errorMessage(() => parse('a = @\nhello.world')),
     'unexpected ref-value at 1 (after @ a string-token or a raw string is expected)' // key, ref
   );
+
+  // unclosed comments
+  assert.is(
+    errorMessage(() => parse('/*')),
+    'unclosed comment found at 0!'
+  );
+  assert.is(
+    errorMessage(() => parse('*/')),
+    'unclosed comment found at 0!'
+  );
 });
 
 test.run();

@@ -69,7 +69,11 @@ const parse = <T extends Record<string, unknown> = {}>(input: string): T => {
 
     switch (current.token) {
       default: {
-        throw Error(`unknown token! (token = ${current.token})`);
+        throw Error(`unknown token at ${i}! (token = ${current.token})`);
+      }
+      case TOKEN.MULTILINE_COMMENT_OPEN:
+      case TOKEN.MULTILINE_COMMENT_CLOSE: {
+        throw Error(`unclosed comment found at ${i}!`);
       }
       // ignoreable itself
       case TOKEN.WHITESPACE:
