@@ -288,7 +288,7 @@ const parse = <T extends Record<string, unknown> = {}>(input: string): T => {
     tgt[target[target.length - 1]] = src[source[source.length - 1]];
   });
 
-  if (keyRef.length > 0) throw Error(`unexpected key (${keyRef.join(',')} has no value)`);
+  if (keyRef.length > 0) throw Error(`unexpected key (${keyRef.join('.')} has no value)`);
   if (prefix.length > 0) {
     const lastType = lastRootType();
 
@@ -296,10 +296,10 @@ const parse = <T extends Record<string, unknown> = {}>(input: string): T => {
       if (prefix.length === 1 && topLevel.array) prefix.pop();
       else
         throw Error(
-          `unexpected unclosed array (${prefix.slice(0, -1).join(',')} is opened but not closed)`
+          `unexpected unclosed array (${prefix.slice(0, -1).join('.')} is opened but not closed)`
         );
     } else if (lastType === 'object')
-      throw Error(`unexpected unclosed object (${prefix.join(',')} is opened but not closed)`);
+      throw Error(`unexpected unclosed object (${prefix.join('.')} is opened but not closed)`);
   }
 
   return re as T;
