@@ -466,6 +466,10 @@ test('"parse" throws proper errors', () => {
     errorMessage(() => parse('a = { b = }')),
     'unexpected key (b has no value)'
   );
+  assert.is(
+    errorMessage(() => parse('a.b')),
+    'unexpected key (a.b has no value)'
+  );
 
   // unclosed string
   assert.is(
