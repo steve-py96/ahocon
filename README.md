@@ -168,3 +168,15 @@ const obj = parse<MyInterface>(ahocon);
 
 console.log(obj.a, typeof obj.b, obj.arr.length);
 ```
+
+<br />
+
+# upcoming
+
+my personal roadmap to a v1 include some stuff:
+
+- cleaner code structure for easier maintainability
+- extendability by plugins/configs (depending on how the above thing works out this might end in sth like sass/scss with different sugar syntaxes for the same thing, sadly this might prolly make it pretty hard to get some syntax highlighting extension working tho unless it covers some standards only)
+- more possible variable manipulation (array concatenation, units & unit-transforms, math operations, ...)
+- looking forward to be mostly feature-complete with [these requirements](https://github.com/lightbend/config/blob/master/HOCON.md) 🔍, even tho tearing apart more partly won't hurt either, but the same base would be nice imho
+- node-specific sub-package for more node-related tasks (f.e. containing syntax to include other files) (maybe also a browser one? wouldn't have a specific browser feature in mind tbh, a tiny fetch wrapper could be used in node too f.e....)
