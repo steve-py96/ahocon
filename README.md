@@ -25,7 +25,7 @@ https://steve-py96.github.io/ahocon/
 
 # how to use
 
-1. `npm install ahocon` / `yarn add ahocon` in your project
+1. `npm install ahocon` / `yarn add ahocon` / `pnpm add ahocon` in your project
 1. import as shown below
 
 ```js
@@ -46,19 +46,39 @@ parse<...>(...) // results in a json suiting the provided hocon
 
 # syntax
 
-Some notes about the syntax:
+Some notable notes about the syntax:
 
-- top-level `{}` is omitable (unless you want a top-level array, then you need top-level `[]`)
-- assigning variables can be done (no matter where) with `:` or `=`
-- variable keys can be a path (`a.b.c` resolves to value c in object b in object a, or as JSON `{ a: { b: { c: ... } } }`)
-- there are single-line comments (`#` or `//`) and inline/multiline comments (`/* ... */`), they don't appear in the produced json
-- string quotes can be omitted in many cases (for keys AND values), cases where they should/have to be used:
-  - you want to preserve whitespaces
-  - you want to use some special character (like `@`) at some special spot (you'll find out once an error appears, try with omiting til then cause it's love \<3)
-- commas are omitable everywhere (unless you want to do inline action like `array = [1,2,3]`)
-- assignments are omitable for objects and arrays
-- refs (referencing other values) are possible via `${reference_path}` or `@reference_path` (they even support relative refs via `@.`)
-- conflicting objects merge (the later value definition wins if they occur to have the same value keys)
+- values are autoformatted if raw (not in string quotes)! (extendable!)
+  - `a = 1` => `{ a: 1 }` (same with negative nums, floats or nums containing e)
+  - `a = true` => `{ a: true }` (same with false)
+  - `a = null` => `{ a: null }`
+  - `a = undefined` => `{ a: undefined }`
+- keys can be nested object paths! `a.b.c = 1` => `{ a: { b: { c: 1 } } }`
+- AHOCON provides no direct refing as HOCON, it provides functions instead (including a ref function)! (extendable!)
+  - `a = 1, b = $ref(a)` => `{ a: 1, b: 1 }` (attention: this only references, it's no clone!)
+  - `a = {}, b = $clone(a)` => `{ a: {}, b: {} }` (cloned, not the same reference anymore)
+  - `a = $var(1)` => `{}` (vars are deleted for the output, **note**: if you want to ref a var clone it!)
+  - `a = $concat("a", "b")` => `{ a: "ab" }` (concats anything)
+  - `a = $assign({ a: 1 }, { b: 2 })` => `{ a: 1, b: 2 }` (port to `Object.assign`)
+  - `a = math.sum(1,2,3,4)` => `{ a: 10 }`
+- things are overwritten when redefined, objects & arrays are merged onto each other
+  - `a = { test: 1 }, a = { test2: 2 }` => `{ a: { test: 1, test2: 2 } }`
+  - `a = { test: 1 }, a = { test: 2 }` => `{ a: { test: 2 } }` (same inner key => overwrite with latest, same with arrays and their numeric keys)
+- AHOCON provides auto-string-dedenting (when using a triple-quote of `"`, `'` or `) and raw strings (single quotes of the same types, can also be multiline tho)
+  ```
+    a = '
+      test
+      test
+    '       # => { a: '\n    test\n    test' }
+    a = '''
+      test
+      test
+    '''     # => { a: 'test\ntest' }
+  ```
+- comments in multiple formats everywhere usable (singleline/multiline/inline)
+  - `# singleline` (ends with eof/eos or newline)
+  - `// singleline` (ends with eof/eos or newline)
+  - `/* multiline or inline */`
 
 <br />
 
@@ -71,51 +91,58 @@ Some notes about the syntax:
   comment
 */
 
-# types (assigning is possible via = and :, remember!)
-string = abc # => { string: "abc" }
-number = 123 # => { number: 123 } # => floats ofc also
-bool = true # => { bool: true }
-null = null # => { null: null }
-undefined = undefined # => { undefined: undefined }
-short.hand = 123 # => { short: { hand: 123 } }
+# string
+string = abc
 
-# objects (commas are optional, remember!)
+# number
+number = 123
+
+# boolean
+bool = true
+
+# null
+null = null
+
+# undefined
+undefined = undefined
+
+# nested object shorthand for short { hand = 123 }
+short.hand = 123
+
+# object (assignment is omitable)
 obj {
   value = 123
   nested {
     otherValue = 456
     someArray = [1,2,3]
-    ref: @.otherValue # => will be 456 here (obj[otherValue])
+
+    # refs starting with dot are referencing relatively to their position
+    ref: $ref(.otherValue)
   }
 }
 
-# arrays (commas are optional, remember!)
+# array
 arr [
   0,1,6
   2
   3
   4,
   { obj: inside }
-  @.0 # => will be 0 here (arr[0])
+
+  # ref within array pointing on index 0
+  $ref(.0)
 ]
 
-# refs
-value = 123
-valueRef = @value
-nestedValue = { other = 2 }
-nestedRef = @nestedValue.other
-
-# merges
+# merge same objects (with overwrites on same keys)
 config {
   a = 1
 }
-
 config { # => overwrites config.a above and adds b
   a = 2
   b = 1
 }
-
-config.a = 3 # => overwrites config.a again via shorthand
+# shorthands also overwrite when conflicting!
+config.a = 3
 ```
 
 so a usage might look like:
@@ -171,12 +198,10 @@ console.log(obj.a, typeof obj.b, obj.arr.length);
 
 <br />
 
-# upcoming
+# upcoming (yet)
 
-my personal roadmap to a v1 include some stuff:
-
-- cleaner code structure for easier maintainability
-- extendability by plugins/configs (depending on how the above thing works out this might end in sth like sass/scss with different sugar syntaxes for the same thing, sadly this might prolly make it pretty hard to get some syntax highlighting extension working tho unless it covers some standards only)
-- more possible variable manipulation (array concatenation, units & unit-transforms, math operations, ...)
-- looking forward to be mostly feature-complete with [these requirements](https://github.com/lightbend/config/blob/master/HOCON.md) 🔍, even tho tearing apart more partly won't hurt either, but the same base would be nice imho
-- node-specific sub-package for more node-related tasks (f.e. containing syntax to include other files) (maybe also a browser one? wouldn't have a specific browser feature in mind tbh, a tiny fetch wrapper could be used in node too f.e....)
+- node-subpackage for including syntax/an including func/inter-file reference func
+- escaping improvements (cutting it out by default + disable option)
+- more tests
+- more structured and more deep documentation (especially about funcs)
+- creating func subpackages (f.e. a convert subpackage, `$convert(1024kib, mib)` and similar)
