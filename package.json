@@ -1,9 +1,9 @@
 {
   "name": "ahocon",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf dist && tsc -p ./tsconfig-build.json && vite build",
+    "build": "rm -rf dist && tsc -p ./tsconfig-build.json && vite build && node patch.js",
     "build:docs": "yarn --cwd docs_editor upgrade ahocon --latest && yarn --cwd docs_editor build && rm -rf docs/* && cp -rf ./docs_editor/dist/* ./docs",
     "preview": "vite preview",
     "test": "uvu -r tsm src/specs",
@@ -13,7 +13,6 @@
     "prepublishOnly": "yarn test"
   },
   "dependencies": {
-    "ahocon": "^0.1.0",
     "rfdc": "^1.3.0"
   },
   "devDependencies": {

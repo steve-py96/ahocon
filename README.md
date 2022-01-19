@@ -205,4 +205,3 @@ console.log(obj.a, typeof obj.b, obj.arr.length);
 - more tests
 - more structured and more deep documentation (especially about funcs)
 - creating func subpackages (f.e. a convert subpackage, `$convert(1024kib, mib)` and similar)
-- type fixes (options became any.. :/)

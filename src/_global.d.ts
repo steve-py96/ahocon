@@ -1,9 +1,9 @@
 export {};
 
 declare global {
-  type Nullable<T> = null | T;
+  export type Nullable<T> = null | T;
 
-  namespace AHOCON {
+  export namespace AHOCON {
     interface LexerToken {
       name: string;
       regex: RegExp;

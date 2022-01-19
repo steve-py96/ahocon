@@ -15,6 +15,11 @@ multiline_formatted = """
   formatted
   world
 """
+var = $var(123) # not appearing!!
+sum = $math.sum(1,2,3,4)
+concat = $concat(a, b, c)
+assign = $assign($ref(obj), $ref(otherObj))
+clone = $clone($ref(assign))
 
 number = 123
 also_number = 123.03
@@ -22,10 +27,14 @@ also_number = 123.03
 bool = true
 also_bool = false
 
-ref = @obj.hello
+ref = $ref(obj.hello)
 
 obj {
   hello = world
+}
+
+otherObj {
+  hallo = mundo
 }
 
 obj.test {
@@ -53,6 +62,6 @@ otherArr [
   3
   5
   7
-  @.3
+  $ref(.3)
 ]
 `;
