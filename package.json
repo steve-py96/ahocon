@@ -1,6 +1,6 @@
 {
   "name": "ahocon",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "dev": "vite",
     "build": "rm -rf dist && tsc -p ./tsconfig-build.json && vite build",
@@ -13,6 +13,7 @@
     "prepublishOnly": "yarn test"
   },
   "dependencies": {
+    "ahocon": "^0.1.0",
     "rfdc": "^1.3.0"
   },
   "devDependencies": {
