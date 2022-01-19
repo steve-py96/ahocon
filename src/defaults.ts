@@ -252,18 +252,22 @@ class Parser extends BaseParser<
           if (arg in results) {
             // arg was evaluated already, can be replaced instantly
             func.args.splice(func.args.indexOf(arg), 1, results[arg]);
-
-            // if no deferreds are found anymore it can be executed and resolved
-            if (!func.args.some(isDeferredSymbol)) {
-              const { value, cleanup } = executeFunc();
-              results[func.self] = value;
-
-              if (cleanup && func.refKey !== null) cleanups.push(() => cleanup(func.refKey!));
-
-              resolveDependencies();
-            } // register the dependendant otherwise
-            else createDependency(arg);
           }
+        }
+
+        const deferredArgs = func.args.filter(isDeferredSymbol);
+
+        // if no deferreds are found anymore it can be executed and resolved
+        if (deferredArgs.length === 0) {
+          const { value, cleanup } = executeFunc();
+          results[func.self] = value;
+
+          if (cleanup && func.refKey !== null) cleanups.push(() => cleanup(func.refKey!));
+
+          resolveDependencies();
+        } // register the dependendant otherwise
+        else {
+          for (const arg of deferredArgs) createDependency(arg);
         }
       }
     }
@@ -504,7 +508,8 @@ class Parser extends BaseParser<
     const [, newIndex] = this.loop(ctx, (token) => token !== LEXER_NEW_LINE);
 
     return this.noop(ctx, {
-      newIndex: newIndex,
+      // -1 to allow the next token to see the newline (it can be important since it's like a comma!)
+      newIndex: newIndex - 1,
     });
   }
 
