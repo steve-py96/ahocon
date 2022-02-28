@@ -1,6 +1,6 @@
 {
   "name": "ahocon",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "scripts": {
     "dev": "vite",
     "build": "rm -rf dist && tsc -p ./tsconfig-build.json && vite build && node patch.js",

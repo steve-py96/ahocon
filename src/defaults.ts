@@ -391,8 +391,8 @@ class Parser extends BaseParser<
       token: string;
       value: unknown;
       ref: Record<string | number, unknown>;
-      refKey: Nullable<string | number>;
-      inside: Nullable<symbol>;
+      refKey: AHOCON.Nullable<string | number>;
+      inside: AHOCON.Nullable<symbol>;
     }
   ) {
     if (token !== LEXER_FUNCTION) return;
