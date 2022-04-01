@@ -170,7 +170,7 @@ class Parser extends BaseParser<
         },
       ];
 
-    const { computed } = this.call(
+    const { computed, next } = this.call(
       {
         index: 0,
         deferred,
@@ -179,6 +179,13 @@ class Parser extends BaseParser<
       },
       tokens[0].token.name
     );
+
+    if (next !== tokens.length)
+      throw new ParserError(
+        {} as AHOCON.ParserContext,
+        `expected more assignments, got ${LEXER_OBJECT_CLOSE}`,
+        next
+      );
 
     const calledFuncs = Object.getOwnPropertySymbols(deferred).map((self) => deferred[self]),
       isDeferredSymbol = (arg: unknown): arg is symbol =>
@@ -634,7 +641,7 @@ class Parser extends BaseParser<
           if (!valueAllowed)
             throw new ParserError(
               ctx,
-              'you cannot define two values without COMMA/NEW_LINE inbetween!',
+              `you cannot define two values without ${LEXER_COMMA} / ${LEXER_NEW_LINE} inbetween!`,
               nextIndex
             );
 
@@ -775,7 +782,7 @@ class Parser extends BaseParser<
             if (!valueAllowed)
               throw new ParserError(
                 ctx,
-                'you cannot define two values without COMMA/NEW_LINE inbetween!',
+                `you cannot define two values without ${LEXER_COMMA} / ${LEXER_NEW_LINE} inbetween!`,
                 nextIndex
               );
 
@@ -860,7 +867,7 @@ class Parser extends BaseParser<
             if (!valueAllowed)
               throw new ParserError(
                 ctx,
-                'you cannot define two values without COMMA/NEW_LINE inbetween!',
+                `you cannot define two values without ${LEXER_COMMA} / ${LEXER_NEW_LINE} inbetween!`,
                 nextIndex
               );
 
