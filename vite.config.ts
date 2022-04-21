@@ -9,7 +9,7 @@ export default defineConfig(async () => {
     build: {
       lib: {
         entry: '/src/index.ts',
-        name: 'stocon',
+        name: 'ahocon',
         fileName: (format) => `index.${format}.js`,
       },
       emptyOutDir: false,
