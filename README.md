@@ -1,10 +1,18 @@
+TODOs:
+
+- package test (tar.gz import => types working? import working? build working? ...)
+- playground
+- interactive preview in docs?
+- README update
+- unit tests
+- vscode plugin
+
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/steve-py96/ahocon?style=flat-square&color=000000)
 ![npm bundle size](https://img.shields.io/bundlephobia/minzip/ahocon?style=flat-square&color=000000)
-![npms score](https://img.shields.io/npms-io/final-score/ahocon)
 
 # AHOCON
 
-Ahocon (short for Another [HOCON](https://github.com/lightbend/config/blob/master/HOCON.md)) (or sth japanese + spanish?) is a little superset of [HOCON](https://github.com/lightbend/config/blob/master/HOCON.md) in a self-written parser. <br /> <br />
+AHOCON (short for Another [HOCON](https://github.com/lightbend/config/blob/master/HOCON.md)) (or sth japanese 🇯🇵 + spanish 🇪🇸?) is a little superset of [HOCON](https://github.com/lightbend/config/blob/master/HOCON.md) in a self-written parser.
 
 TL;DR (HOCON-link): HOCON is a JSON superset which allows simpler writing style for humans (omiting quotes f.e., see [syntax below!](#syntax)).
 
@@ -39,12 +47,22 @@ also available for typescript
 ```ts
 import { parse } from 'ahocon'
 
-parse<...>(...) // results in a json suiting the provided hocon
+parse<...>(...) // results in a json suiting the provided hocon (which is provided as string)
+```
+
+also available without functions (lite-version)
+
+```js
+import { parse } from 'ahocon/lite';
+
+parse(...) // results in a json suiting the provided hocon (which is provided as string)
 ```
 
 <br />
 
 # syntax
+
+(Better documentation coming soon.. 😕)
 
 Some notable notes about the syntax:
 
@@ -57,13 +75,6 @@ Some notable notes about the syntax:
 - AHOCON provides no direct refing as HOCON, it provides functions instead (including a ref function)! (extendable!)
   - `a = 1, b = $ref(a)` => `{ a: 1, b: 1 }` (attention: this only references, it's no clone!)
   - `a = {}, b = $clone(a)` => `{ a: {}, b: {} }` (cloned, not the same reference anymore)
-  - `a = $var(1)` => `{}` (vars are deleted for the output, **note**: if you want to ref a var clone it!)
-  - `a = $concat("a", "b")` => `{ a: "ab" }` (concats anything)
-  - `a = $assign({ a: 1 }, { b: 2 })` => `{ a: 1, b: 2 }` (port to `Object.assign`)
-  - `a = math.sum(1,2,3,4)` => `{ a: 10 }`
-- things are overwritten when redefined, objects & arrays are merged onto each other
-  - `a = { test: 1 }, a = { test2: 2 }` => `{ a: { test: 1, test2: 2 } }`
-  - `a = { test: 1 }, a = { test: 2 }` => `{ a: { test: 2 } }` (same inner key => overwrite with latest, same with arrays and their numeric keys)
 - AHOCON provides auto-string-dedenting (when using a triple-quote of `"`, `'` or `) and raw strings (single quotes of the same types, can also be multiline tho)
   ```
     a = '
@@ -198,10 +209,10 @@ console.log(obj.a, typeof obj.b, obj.arr.length);
 
 <br />
 
-# upcoming (yet)
+# upcoming
 
-- node-subpackage for including syntax/an including func/inter-file reference func
-- escaping improvements (cutting it out by default + disable option)
-- more tests
-- more structured and more deep documentation (especially about funcs)
-- creating func subpackages (f.e. a convert subpackage, `$convert(1024kib, mib)` and similar)
+- (new) docs & README..
+- improved playground
+- tests
+- little subpackages (math, convert, ...)
+- vscode extension

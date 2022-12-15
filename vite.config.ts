@@ -1,18 +1,25 @@
-import { defineConfig } from 'vite';
-import { resolve } from 'node:path';
-import { cp } from 'node:fs/promises';
+import { stat, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig(async () => {
-  await cp(resolve(__dirname, 'src/_global.d.ts'), resolve(__dirname, 'dist/_global.d.ts'));
+  if (
+    !(await stat(join(process.cwd(), 'src/dev.ts'))
+      .then(() => true)
+      .catch(() => false))
+  ) {
+    console.log('creating src/dev.ts');
+
+    writeFile(
+      join(process.cwd(), 'src/dev.ts'),
+      "import { parse } from '.';\n\nconsole.log(parse('test = 123'));",
+      { encoding: 'utf-8' }
+    );
+  }
 
   return {
-    build: {
-      lib: {
-        entry: '/src/index.ts',
-        name: 'ahocon',
-        fileName: (format) => `index.${format}.js`,
-      },
-      emptyOutDir: false,
+    test: {
+      passWithNoTests: true,
     },
   };
 });

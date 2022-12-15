@@ -1,15 +1,64 @@
-import { assertType } from '../utils';
+export { add, subtract, divide, multiply };
 
-export { sum };
+const add: AHOCON.CustomFunction = ({ args, node }) => {
+  let acc = 0;
 
-const sum: AHOCON.ParserFunc<Array<string | number>> = ({ args }) => {
-  let tmp = 0;
+  args.forEach((item) => {
+    if (typeof item !== 'number')
+      throw Error(
+        `${node.name.value} can only work with numbers, got ${typeof item} (value = ${item})`
+      );
 
-  args.forEach((arg) => {
-    assertType(arg, 'number');
-
-    tmp += arg as number;
+    acc += item;
   });
 
-  return { value: tmp };
+  node.evaluated = acc;
+};
+
+const subtract: AHOCON.CustomFunction = ({ args, node }) => {
+  let acc = 0;
+
+  args.forEach((item, index) => {
+    if (typeof item !== 'number')
+      throw Error(
+        `${node.name.value} can only work with numbers, got ${typeof item} (value = ${item})`
+      );
+
+    if (index === 0) acc = item;
+    else acc -= item;
+  });
+
+  node.evaluated = acc;
+};
+
+const divide: AHOCON.CustomFunction = ({ args, node }) => {
+  let acc = 0;
+
+  args.forEach((item, index) => {
+    if (typeof item !== 'number')
+      throw Error(
+        `${node.name.value} can only work with numbers, got ${typeof item} (value = ${item})`
+      );
+
+    if (index === 0) acc = item;
+    else acc /= item;
+  });
+
+  node.evaluated = acc;
+};
+
+const multiply: AHOCON.CustomFunction = ({ args, node }) => {
+  let acc = 0;
+
+  args.forEach((item, index) => {
+    if (typeof item !== 'number')
+      throw Error(
+        `${node.name.value} can only work with numbers, got ${typeof item} (value = ${item})`
+      );
+
+    if (index === 0) acc = item;
+    else acc *= item;
+  });
+
+  node.evaluated = acc;
 };

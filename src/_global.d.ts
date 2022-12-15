@@ -1,77 +1,102 @@
 export {};
 
 declare global {
+  /**
+   * the AHOCON namespace with some helper types such as `PickNode<...>` (`type RootNode = AHOCON.PickNode<'root'>`)
+   */
   export namespace AHOCON {
-    type Nullable<T> = null | T;
-
-    interface LexerToken {
-      name: string;
-      regex: RegExp;
-    }
-
-    interface LexerContext {
-      content: string;
-      index: number;
-      token: AHOCON.LexerToken;
-    }
-
-    interface ParserFuncParams<
-      Args extends Array<unknown> = Array<unknown>,
-      Abs extends {} = Record<string | number, unknown>,
-      Ref extends {} = Record<string | number, unknown>
-    > {
-      abs: Abs;
-      ref: Ref;
-      args: Args;
-      argsRaw: ParserContext['deferred'][symbol]['argsRaw'];
-    }
-
-    type ParserFunc<
-      Args extends Array<unknown> = Array<unknown>,
-      Ref extends {} = Record<string | number, unknown>,
-      Abs extends {} = Record<string | number, unknown>,
-      ReturnValue = unknown
-    > = (params: ParserFuncParams<Args, Abs, Ref>) => {
-      value: ReturnValue;
-      cleanup?: (key: string | number) => void;
+    /**
+     * the node shell (shared stuff of any node)
+     */
+    export type NodeShell<T> = T & {
+      range: [start: number, end: number];
+      raw: string;
     };
 
-    interface ParserOptions {
-      funcs: Record<string, AHOCON.ParserFunc>;
-      inputDetections?: Partial<{
-        custom: (input: string) => unknown;
-        true: RegExp | Array<string> | string;
-        false: RegExp | Array<string> | string;
-        numbers: RegExp | Array<string> | string;
-        null: RegExp | Array<string> | string;
-        undefined: RegExp | Array<string> | string;
-      }>;
-    }
+    /**
+     * any possible node
+     */
+    export type Node =
+      | AHOCON.NodeShell<{
+          type: 'root';
+          entry: AHOCON.PickNode<'array' | 'object'>;
+          parseConfig?: AHOCON.ParseConfig;
+          parent?: AHOCON.Node | null;
+          evaluated?: unknown;
+        }>
+      | AHOCON.NodeShell<{
+          type: 'object';
+          props: Array<{
+            key: AHOCON.KeyNode;
+            value: AHOCON.ValueNode;
+          }>;
+          parent?: AHOCON.Node | null;
+          evaluated?: unknown;
+        }>
+      | AHOCON.NodeShell<{
+          type: 'array';
+          values: Array<AHOCON.ValueNode>;
+          parent?: AHOCON.Node | null;
+          evaluated?: unknown;
+        }>
+      | AHOCON.NodeShell<{ type: 'string'; value: string; parent?: AHOCON.Node | null }>
+      | AHOCON.NodeShell<{ type: 'assignment'; value: string; parent?: AHOCON.Node | null }>
+      | AHOCON.NodeShell<{
+          type: 'function';
+          name: AHOCON.KeyNode;
+          args: Array<AHOCON.ValueNode>;
+          parent?: AHOCON.Node | null;
+          evaluated?: unknown;
+        }>
+      | AHOCON.NodeShell<{ type: 'raw'; value: unknown; parent?: AHOCON.Node | null }>;
 
-    type ParserCallback = (ctx: AHOCON.ParserContext) => {
-      next: number;
-      computed: null | {
-        value: unknown;
-      };
-    };
+    /**
+     * possible keys for objects
+     */
+    export type KeyNode = NodeShell<{
+      value: string;
+      partials: Array<AHOCON.PickNode<'string' | 'raw'>>;
+      parent?: AHOCON.Node | null;
+    }>;
 
-    interface ParserContext {
-      index: number;
-      currentPath: Array<{ type: string; value: string | number }>;
-      deferred: Record<
-        symbol,
-        {
-          args: Array<unknown>;
-          argsRaw: Array<{ type: string }>;
-          inside: Nullable<symbol>;
-          name: string | number;
-          rawPath: AHOCON.ParserContext['currentPath'];
-          ref: Nullable<Record<string | number, unknown>>;
-          refKey: Nullable<string | number>;
-          self: symbol;
-        }
-      >;
-      tokens: Array<AHOCON.LexerContext>;
+    /**
+     * possible values of objects / arrays / function args
+     */
+    export type ValueNode = AHOCON.PickNode<'string' | 'array' | 'object' | 'function' | 'raw'>;
+
+    /**
+     * picks the node by the provided type identifier, f.e. `let ref = myNode as PickNode<'root'>`
+     */
+    export type PickNode<T extends AHOCON.Node['type']> = Exclude<
+      AHOCON.Node,
+      Exclude<AHOCON.Node, { type: T }>
+    >;
+
+    /**
+     * the type for custom functions, f.e. `const myFunc: CustomFunction = (params) => {}`
+     */
+    export type CustomFunction = (params: {
+      args: Array<unknown>;
+      root: AHOCON.PickNode<'root'>;
+      node: AHOCON.PickNode<'function'>;
+      parseNode: (node: AHOCON.Node) => unknown;
+    }) => unknown;
+
+    /**
+     * the optionally providable parse config
+     */
+    export interface ParseConfig {
+      /**
+       * functions which can be used in the config
+       *
+       * IMPORTANT: only the extended parse (`import { parse } from 'ahocon/extended'`) uses this
+       */
+      functions?: Record<string, AHOCON.CustomFunction | Record<string, AHOCON.CustomFunction>>;
+
+      /**
+       * allows to run over the ast nodes before the parser does
+       */
+      preparse?: (root: AHOCON.PickNode<'root'>) => unknown;
     }
   }
 }

@@ -1,41 +1,71 @@
 {
   "name": "ahocon",
-  "version": "0.1.8",
+  "version": "0.2.1",
   "scripts": {
-    "dev": "vite",
-    "build": "rm -rf dist && tsc -p ./tsconfig-build.json && vite build && node patch.js",
-    "build:docs": "yarn --cwd docs_editor upgrade ahocon --latest && yarn --cwd docs_editor build && rm -rf docs/* && cp -rf ./docs_editor/dist/* ./docs",
-    "preview": "vite preview",
-    "test": "uvu -r tsm src/specs",
-    "test:watch": "watchlist src/specs -- uvu -r tsm src/specs --ignore testHelpers.ts",
-    "prepare": "husky install",
+    "dev": "vite --mode=extended",
+    "dev-lite": "vite --mode=lite",
+    "build": "sh build.sh",
+    "test": "vitest",
+    "test-extended": "vitest --mode=extended",
+    "test:ui": "vitest",
+    "postinstall": "husky install",
     "format": "pretty-quick",
-    "prepublishOnly": "yarn test"
-  },
-  "dependencies": {
-    "rfdc": "^1.3.0"
+    "prepublish": "pnpm run test",
+    "prepack": "pinst --disable",
+    "postpack": "pinst --enable"
   },
   "devDependencies": {
-    "@types/node": "^16",
-    "husky": "^7.0.4",
-    "prettier": "^2.5.1",
+    "@types/node": "^18.11.15",
+    "@vitest/ui": "^0.25.8",
+    "fast-glob": "^3.2.12",
+    "husky": "^8.0.2",
+    "pinst": "^3.0.0",
+    "prettier": "^2.8.1",
     "pretty-quick": "^3.1.3",
-    "tsm": "^2.2.1",
-    "typescript": "^4.4.4",
-    "uvu": "^0.5.2",
-    "vite": "^2.7.2",
-    "watchlist": "^0.3.1"
+    "typescript": "^4.9.4",
+    "vite": "^4.0.1",
+    "vite-plugin-remove-exports": "^1.1.0",
+    "vitest": "^0.25.8"
   },
-  "main": "./dist/index.umd.js",
-  "module": "./dist/index.es.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "main": "./index.umd.js",
+  "module": "./index.es.js",
+  "types": "./index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.es.js",
-      "require": "./dist/index.umd.js"
+      "import": "./index.es.js",
+      "require": "./index.umd.js"
+    },
+    "./extended": {
+      "import": "./extended/index.es.js",
+      "require": "./extended/index.umd.js"
+    },
+    "./ast": {
+      "import": "./ast.es.js",
+      "require": "./ast.umd.js"
+    },
+    "./extended/ast": {
+      "import": "./extended/ast.es.js",
+      "require": "./extended/ast.umd.js"
+    },
+    "./input": {
+      "import": "./input.es.js",
+      "require": "./input.umd.js"
+    },
+    "./extended/input": {
+      "import": "./extended/input.es.js",
+      "require": "./extended/input.umd.js"
+    },
+    "./funcs/ref": {
+      "import": "./funcs/ref.es.js",
+      "require": "./funcs/ref.umd.js"
+    },
+    "./funcs/math": {
+      "import": "./funcs/math.es.js",
+      "require": "./funcs/math.umd.js"
+    },
+    "./funcs/convert": {
+      "import": "./funcs/convert.es.js",
+      "require": "./funcs/convert.umd.js"
     }
   },
   "description": "a hocon superset",
