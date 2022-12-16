@@ -1,4 +1,4 @@
-# https://vitepress.vuejs.org/guide/deploying#github-pages
+# https://github.com/pnpm/action-setup#use-cache-to-reduce-installation-time
 name: Github Pages Deployment
 
 on:
@@ -10,21 +10,43 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: yarn
-      - run: yarn --cwd docs install --frozen-lockfile
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Build
-        run: yarn --cwd docs build
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install Docs dependencies
+        run: pnpm --dir docs install
+
+      - name: Build Docs
+        run: pnpm --dir docs build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/.vitepress/dist
-          # cname: example.com # if wanna deploy to custom domain
