@@ -3,11 +3,15 @@
 
 # getting started
 
+## documentation
+
+https://steve-py96.github.io/ahocon/
+
 ## what is AHOCON?
 
 AHOCON (short for Another HOCON, or something 🇯🇵 + 🇪🇸?) is a custom implementation of the [HOCON grammar](https://github.com/lightbend/config/blob/master/HOCON.md).
 The goal is to provide a dead simple grammar to write configurations in and of course a parser to parse that configuration to a usable format (aka JSON).
-AHOCON is also extendable via custom functions (more about this in the [advanced section](/advanced)) later.
+AHOCON is also extendable via custom functions (more about this in the [advanced section](https://steve-py96.github.io/ahocon/advanced)) later.
 
 ## where can I use AHOCON?
 
