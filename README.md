@@ -66,7 +66,8 @@ console.log(myConfig); // logs { "example": true }
 type TypeofMyConfig = typeof myConfig; // shows MyConfig
 ```
 
-::: warning
+### warning
+
 AHOCON is not a type / schema checker. Consider using [zod](https://www.npmjs.com/package/zod) or similar if the configuration isn't static or comes from a user and needs to be validated.
 
 ```typescript
@@ -85,5 +86,3 @@ const evilUserConfig = parse<z.infer<typeof schema>>('example = 123'); // type {
 schema.parse(myConfig); // all good
 schema.parse(evilUserConfig); // ZodError
 ```
-
-:::
