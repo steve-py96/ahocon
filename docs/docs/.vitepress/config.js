@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
+  base: '/ahocon/'
   title: 'AHOCON',
   description: 'AHOCON documentation - powered by vitepress ❤️',
   themeConfig: {

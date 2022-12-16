@@ -25,8 +25,9 @@ pnpm dlx tsx build/copyTs.js
 echo "patch AHOCON namespace into d.ts files by adding /// <reference path..."
 pnpm dlx tsx build/ts-namespace-patch.js
 
-echo "copying package.json into dist"
+echo "copying package.json & README into dist"
 cp package.json dist/package.json
+cp README.md dist/README.md
 
 TGZ_FILE="ahocon-$npm_package_version.tgz"
 
