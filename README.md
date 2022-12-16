@@ -90,3 +90,9 @@ const evilUserConfig = parse<z.infer<typeof schema>>('example = 123'); // type {
 schema.parse(myConfig); // all good
 schema.parse(evilUserConfig); // ZodError
 ```
+
+## upcoming / TODOs
+
+- new improved playground
+- vscode plugin
+- tests (unit / post-build)
