@@ -12,6 +12,8 @@ export {
 
 const isNewline = (string: string) => string === '\n';
 
+const isComma = (string: string) => string === ',';
+
 const isWhitespace = (string: string, newline?: boolean) =>
   string === ' ' || string === '\t' || !!(newline && isNewline(string));
 
@@ -21,7 +23,7 @@ const isString = (string: string) => string === '"' || string === '`' || string 
 
 const isAssignment = (string: string) => string === ':' || string === '=' || string === ':=';
 
-const isSeparator = (string: string) => string === ';' || string === ',' || isNewline(string);
+const isSeparator = (string: string) => string === ';' || isComma(string) || isNewline(string);
 
 const isDot = (string: string) => string === '.';
 
@@ -338,6 +340,7 @@ const parseObject = (raw: string, startIndex: number): AHOCON.PickNode<'object'>
     });
 
     nextTokenIndex = skipComments(raw, value.range[1] + 1);
+    if (isSeparator(raw[nextTokenIndex])) nextTokenIndex = skipComments(raw, nextTokenIndex + 1);
   } while (nextTokenIndex < raw.length && !isObjectClose(raw[nextTokenIndex]));
 
   const re: AHOCON.PickNode<'object'> = {

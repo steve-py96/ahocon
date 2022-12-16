@@ -1,6 +1,6 @@
 {
   "name": "ahocon",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "scripts": {
     "dev": "vite --mode=extended",
     "dev-lite": "vite --mode=lite",
