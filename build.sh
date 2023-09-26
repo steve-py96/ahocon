@@ -1,33 +1,39 @@
 #!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 
+# exit on any error
+set -e
+
 # remove current dist
 echo "remove current dist"
 rm -rf dist
 
 # check types
 echo "checking types.."
-tsc -p ./tsconfig-build.json
+pnpm exec tsc -p ./tsconfig-build.json
 
 # build parser & subpackages
 echo "build parser & subpackages (lite version with variables only)"
-pnpm dlx tsx build/viteBuild.js
+pnpm exec tsx build/viteBuild.ts
 
 # build light-version
 echo "build parser & subpackages (extended version with functions)"
-VITE_EXTENDED_MODE=true pnpm dlx tsx build/viteBuild.js
+VITE_EXTENDED_MODE=true pnpm exec tsx build/viteBuild.ts
 
 # copy _globals.d.ts (with AHOCON namespace) into dist
 echo "copy .d.ts files into dist & extended + the global AHOCON namespace"
-pnpm dlx tsx build/copyTs.js
+pnpm exec tsx build/copyTs.ts
 
 # patch ts namespace references
 echo "patch AHOCON namespace into d.ts files by adding /// <reference path..."
-pnpm dlx tsx build/ts-namespace-patch.js
+pnpm exec tsx build/ts-namespace-patch.ts
 
 echo "copying package.json & README into dist"
 cp package.json dist/package.json
 cp README.md dist/README.md
+
+echo "adding proper exports to package.json"
+pnpm exec tsx build/addExports.ts
 
 TGZ_FILE="ahocon-$npm_package_version.tgz"
 
@@ -58,4 +64,8 @@ console.log(parse(\`
 EOF
 npm pkg set scripts.ts="tsx test.ts"
 npm pkg set scripts.js="tsx test.js"
-echo "run \`npm run ts\` (or js) <3"
+echo "\n\nrun \`npm run ts\` (or js) inside the package-test directory <3\n\n"
+
+# check if the package.json is fine
+echo "linting exports field with publint..."
+npx --yes publint ./node_modules/ahocon

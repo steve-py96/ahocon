@@ -1,19 +1,20 @@
-import { build } from 'vite';
+import { build, type UserConfig } from 'vite';
 import glob from 'fast-glob';
 import removeExports from 'vite-plugin-remove-exports';
 
-/**
- * @param {string} entry
- * @returns {import('vite').UserConfig}
- */
-const createBuildConfig = (entry) => ({
+const formatToExtensionMap = {
+  umd: 'js',
+  es: 'mjs',
+};
+
+const createBuildConfig = (entry: string): UserConfig => ({
   // abusing mode since env variable isn't passed thru
   mode: process.env.VITE_EXTENDED_MODE ? 'extended' : 'lite',
   plugins: process.env.VITE_EXTENDED_MODE
     ? []
     : [
         removeExports({
-          match(id) {
+          match() {
             // needs to be removed, otherwise not tree-shakable in lite-mode
             return ['parseFunction'];
           },
@@ -26,19 +27,17 @@ const createBuildConfig = (entry) => ({
       fileName: (format) =>
         entry
           .replace('src/', process.env.VITE_EXTENDED_MODE ? 'extended/' : '')
-          .replace('.ts', `.${format}.js`),
+          .replace('.ts', `.${formatToExtensionMap[format] ?? 'js'}`),
     },
     emptyOutDir: false,
   },
 });
 
 void (async () => {
-  let files = await glob(['src/**/*.ts', '!src/**/*.d.ts']);
+  let files = await glob(['src/**/*.ts', '!src/**/*.d.ts', '!src/dev.ts']);
 
   if (process.env.VITE_EXTENDED_MODE) files = files.filter((file) => !file.includes('src/funcs/'));
 
   // for loop to sequentially build the files ( parallely destroys the logs.. :( )
-  for (const file of files) {
-    await build(createBuildConfig(file));
-  }
+  for (const file of files) await build(createBuildConfig(file));
 })();

@@ -1,5 +1,5 @@
-const { readFile, writeFile } = require('node:fs/promises');
-const { join } = require('node:path');
+import { readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import glob from 'fast-glob';
 
 void (async () =>
