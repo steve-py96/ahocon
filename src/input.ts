@@ -10,7 +10,7 @@ export {
   parseValue,
 };
 
-const isNewline = (string: string) => string === '\n';
+const isNewline = (string: string) => string === '\n' || string === '\r\n';
 
 const isComma = (string: string) => string === ',';
 
