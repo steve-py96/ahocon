@@ -1,6 +1,6 @@
 {
   "name": "ahocon",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "scripts": {
     "dev": "vite --mode=extended",
     "dev-lite": "vite --mode=lite",
@@ -28,6 +28,7 @@
     "vite-plugin-remove-exports": "^1.1.0",
     "vitest": "^0.33.0"
   },
+  "type": "commonjs",
   "main": "./index.js",
   "module": "./index.mjs",
   "types": "./index.d.ts",
